@@ -3,7 +3,17 @@ body {
   margin: 0;
 }
 
-#map,
+#slidecontainer{
+  width: 100%
+}
+
+#map {
+  width: 1400px;
+  height: 500px;
+  padding: 20px;
+}
+
+
 body,
 html {
   height: 100%;

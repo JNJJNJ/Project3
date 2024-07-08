@@ -3,11 +3,16 @@ let url = "../UAP_Data/uap_data_output.geojson";
 // https://github.com/JNJJNJ/Project3/blob/main/UAP_Data/uap_data_output.geojson
 
 
+let shape_filter = 'All'
+let markerRadius = .1
+let shapeColor = '#FFFF00'
+let markersOnMap = 10000
+
 // Initiate the Leaflet map
 let uap_map = L.map("map", {
     // Centered on Kansas City
     center: [39.09, -94.58],
-    zoom: 3
+    zoom: 5
 });
 
 
@@ -20,9 +25,34 @@ var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/a
 });
 Stadia_AlidadeSmoothDark.addTo(uap_map);
 
-
+let shapes = [
+    "Changing",
+    "Chevron",
+    "Cigar",
+    "Circle",
+    "Cone",
+    "Cross",
+    "Cube",
+    "Cylinder",
+    "Diamond",
+    "Disk",
+    "Egg",
+    "Fireball",
+    "Flash",
+    "Formation",
+    "Light",
+    "Orb",
+    "Other",
+    "Oval",
+    "Rectangle",
+    "Sphere",
+    "Star",
+    "Teardrop",
+    "Triangle"
+    ]
 //Leaflet circleMarker: fillColor property - marker color corresponding to earthquake depth
 function shape_color(shape) {
+    return shapeColor
     switch (true) {
         case shape == 'Changing':
             return "#F08784";
@@ -75,81 +105,140 @@ function shape_color(shape) {
     }
 }
 
-// Leaflet circleMarker: radius property  - marker size corresponding to earthquake magnitude 
-function magnitude(marker_size) {
-    return marker_size * 5;
+function setMarkers(feature, latlng) {
+    return L.circleMarker(latlng, marker_options(feature));
 }
-
 
 //Leaflet circleMarker: properties
 function marker_options(feature) {
+    if(markersOnMap < 500){
+        markerRadius = 3
+    }
     return {
-        //radius: magnitude(feature.properties.mag),
-        radius: 1,
+        radius: markerRadius,
         fillColor: shape_color(feature.properties.Shape),
-        color: "#FFFF00",
+        color: shapeColor,
         weight: .5,
         opacity: .5,
         fillOpacity: .5
     };   
 }
 
-
 // Leaflet onEachFeature: properties
 function each_feature(feature, layer) {
     let sight_date = new Date(feature.properties.Occurred);
     sight_date = (sight_date.getMonth()+1) + '/' + sight_date.getDate() + '/' + sight_date.getFullYear(); 
+    
     layer.bindPopup(
         "<h3>Date: " + sight_date + "</h3>" +
         "<h4> UAP Shape: " + feature.properties.Shape + "</h4>" +
         "<b>Lat:</b> " + feature.geometry.coordinates[0] +
         "<br /><b>Lon:</b> " + feature.geometry.coordinates[1] +
-        "<br /><b>Summary:</b> " + feature.properties.Summary 
+        "<br /><b>Summary:</b> " + feature.properties.Summary
     );
-}
 
+}
 
 // Legend for map color depth
 function make_legend(){
     let legend = L.DomUtil.create("div", "legend"),
-
-        depth = [-10, 10, 30, 50, 70, 90];
+        depth = ['Oval', 'Rectangle', 'Sphere', 'Star', 'Teardrop', 'Triangle'];
         legend.innerHTML +=
-            '<b>Depth</b> <br />' +
-            '<span style="background:' + depth_color(depth[0]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[0] + '-' +  depth[1] + ' km<br />' +
-            '<span style="background:' + depth_color(depth[1]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[1] + '-' +  depth[2] + ' km<br />' +
-            '<span style="background:' + depth_color(depth[2]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[2] + '-' +  depth[3] + ' km<br />' +
-            '<span style="background:' + depth_color(depth[3]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[3] + '-' +  depth[4] + ' km<br />' +
-            '<span style="background:' + depth_color(depth[4]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[4] + '-' +  depth[5] + ' km<br />' +
-            '<span style="background:' + depth_color(depth[5]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[5] + ' km<br />'
+            '<b>Shapes</b> <br />' +
+            '<span style="background:' + shape_color(depth[0]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[0] + '<br />' +
+            '<span style="background:' + shape_color(depth[1]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[1] + '<br />' +
+            '<span style="background:' + shape_color(depth[2]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[2] + '<br />' +
+            '<span style="background:' + shape_color(depth[3]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[3] + '<br />' +
+            '<span style="background:' + shape_color(depth[4]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[4] + '<br />' +
+            '<span style="background:' + shape_color(depth[5]) + ';">&nbsp&nbsp&nbsp</span> ' + depth[5] + '<br />'
 
     return legend;
 }
 
-
 // Leaflet layer for the map legend
-function add_legend(map){
-    let legend = L.control({position: "bottomright"});
+function add_legend(uap_map){
+    let legend = L.control({position: "topright"});
     legend.onAdd = make_legend
-    legend.addTo(map)
+    legend.addTo(uap_map)
 }
 
+let dataset = d3.json(url)
+let geoLayer
 
 // Retrieve and add the sighting data to the map
-d3.json(url).then(function (data) {
-    
-    // Add sighting geoJson data to the map
-    L.geoJson(data, {
-        
-        pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, marker_options(feature));
-        },
+dataset.then(function (data) {
+//d3.json(url).then(function (data) {
+    geoLayer = L.geoJson(data, {
+
+        pointToLayer: setMarkers,
 
         // Feature data popup
-        onEachFeature: each_feature
+        onEachFeature: each_feature,
+
+        filter: filterMap
 
     }).addTo(uap_map);
 
     // Add the color legend
-    //add_legend(uap_map) 
-});
+    // add_legend(uap_map) 
+ });
+
+
+ function setShape(shape){
+    shape_filter = shape
+    unFilterMap()
+ }
+
+ function setDate(){
+    unFilterMap()
+ }
+
+ function filterMap (feature, layer){
+    fDate = new Date(feature.properties.Occurred)
+    fYear = fDate.getFullYear()
+    t = document.getElementById("yearValue").innerHTML.text
+    slider = document.getElementById("slidecontainer");
+    if (shape_filter == 'All' && fYear <= slider.value) {
+        markerRadius = 1
+        shapeColor = '#FFFF00'
+        markersOnMap += 1
+        return true
+    }else if (feature.properties.Shape == shape_filter && fYear <= slider.value){
+        markerRadius = 3
+        shapeColor = '#FF0000'
+        markersOnMap += 1
+        return true
+    }else {
+        return false
+    }
+ }
+
+ let markers 
+ function unFilterMap (feature, layer){
+
+    geoLayer.remove()
+    markersOnMap = 0
+    dataset.then(function (data) {
+
+       geoLayer = L.geoJson(data, {
+
+            pointToLayer: setMarkers,
+
+            // Feature data popup
+            onEachFeature: each_feature,
+
+
+            filter: filterMap
+        }).addTo(uap_map) 
+    });
+    
+ }
+
+ let dropdownMenu = d3.select("#selDataset");
+ dropdownMenu.append("option").text("All").property("value");
+ for (x in shapes){
+    dropdownMenu.append("option").text(shapes[x]).property("value");
+ } 
+
+
+
