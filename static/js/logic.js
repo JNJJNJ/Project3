@@ -69,7 +69,8 @@ let shapes = [
 function median(values){
 
     if (values.length === 0) {
-        throw new Error('Input array is empty');
+        return 0
+        // throw new Error('Input array is empty');
     }
     
     // Sorting values, preventing original array
@@ -282,7 +283,6 @@ dataset.then(function (data) {
         }).addTo(uap_map) 
 
         // Update sighting info
-        
         mostReportedLon = median(arMostReportedLon)
         mostReportedLat = median(arMostReportedLat)
         sightingInfo()
