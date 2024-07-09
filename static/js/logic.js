@@ -1,6 +1,5 @@
 // URL for the GeoJSON UAP data
 let url = "../UAP_Data/uap_data_output.geojson";
-// https://github.com/JNJJNJ/Project3/blob/main/UAP_Data/uap_data_output.geojson
 
 // Globals 
 let dataset = d3.json(url)
@@ -65,6 +64,8 @@ let shapes = [
     "Triangle"
     ]
 
+// Get Median Values
+// Credit https://jsfiddle.net/zgtne5s6/
 function median(values){
 
     if (values.length === 0) {
@@ -85,6 +86,7 @@ function median(values){
     return rslt
     
 }
+
 
 // Leaflet Marker Color: 
 function shape_color(shape) {
