@@ -14,13 +14,18 @@ let sightingSummary = ''
 let sightingCity = ''
 let sightingState = ''
 let sightingOccurred = ''
+let showStarbucks = 'No'
+let arMostReportedLon = []
+let arMostReportedLat = []
+let mostReportedLon = 0
+let mostReportedLat = 0
 
 
 // Initiate the Leaflet map
 let uap_map = L.map("map", {
     // Centered on Kansas City
     center: [39.09, -94.58],
-    zoom: 5
+    zoom: 4
 });
 
 
@@ -60,6 +65,24 @@ let shapes = [
     "Triangle"
     ]
 
+function median(values){
+
+    if (values.length === 0) {
+        throw new Error('Input array is empty');
+    }
+    
+    // Sorting values, preventing original array
+    // from being mutated.
+    values = [...values].sort((a, b) => a - b);
+    
+    const half = Math.floor(values.length / 2);
+    
+    return (values.length % 2
+        ? values[half]
+        : (values[half - 1] + values[half]) / 2
+    );
+    
+}
 
 // Leaflet Marker Color: 
 function shape_color(shape) {
@@ -76,6 +99,10 @@ function marker_options(feature) {
     if(markersOnMap < 500){
         markerRadius = 3
     }
+    if (feature.properties.Shape == 'Starbucks'){
+        markerRadius = .1
+    }
+
     return {
         radius: markerRadius,
         fillColor: shape_color(feature.properties.Shape),
@@ -83,7 +110,7 @@ function marker_options(feature) {
         weight: .5,
         opacity: .5,
         fillOpacity: .5
-    };   
+    }; 
 }
 
 // Leaflet onEachFeature: properties 
@@ -92,20 +119,49 @@ function each_feature(feature, layer) {
     sight_date = (sight_date.getMonth()+1) + '/' + sight_date.getDate() + '/' + sight_date.getFullYear(); 
     
     // update globals here
-    sightingsCount += 1 
-    sightingSummary = feature.properties.Summary
-    sightingCity = feature.properties.City
-    sightingState = feature.properties.State
-    sightingOccurred = feature.properties.Occurred
+    if (feature.properties.Shape != 'Starbucks'){
+        sightingsCount += 1 
+    }
+    arMostReportedLon.push(feature.geometry.coordinates[0])
+    arMostReportedLat.push(feature.geometry.coordinates[1])
 
+    if(sightingOccurred < sight_date){
+        sightingSummary = feature.properties.Summary
+        sightingCity = feature.properties.City
+        sightingState = feature.properties.State
+        sightingOccurred = sight_date
+    }
+
+    let cann = feature.properties.Legal_Cannabis
+    if(cann === '1/1/2050'){
+        cann = 'Not Yet'
+    }
+    let UAPShape = feature.properties.Shape
     // add popup
-    layer.bindPopup(
-        "<h3>Date: " + sight_date + "</h3>" +
-        "<h4> UAP Shape: " + feature.properties.Shape + "</h4>" +
-        "<b>Lat:</b> " + feature.geometry.coordinates[0] +
-        "<br /><b>Lon:</b> " + feature.geometry.coordinates[1] +
-        "<br /><b>Summary:</b> " + feature.properties.Summary
-    );
+    if (UAPShape === 'Starbucks'){
+        if (showStarbucks == 'Yes'){
+            layer.bindPopup(
+                "<h3>Starbucks</h3>" +
+                "<b>Lon:</b> " + feature.geometry.coordinates[0] +
+                "<br /><b>Lat: </b> " + feature.geometry.coordinates[1] +
+                "<br /><b>City: </b> " + feature.properties.City +
+                "<br /><b>State: </b> " + feature.properties.State +
+                "<br /><b>Summary: </b> " + feature.properties.Summary +
+                "<br /><b>Legalized Cannabis: </b> " + cann
+            );
+        }
+    } else {
+        layer.bindPopup(
+            "<h3>Date: " + sight_date + "</h3>" +
+            "<h4> UAP Shape: " + feature.properties.Shape + "</h4>" +
+            "<b>Lon:</b> " + feature.geometry.coordinates[0] +
+            "<br /><b>Lat: </b> " + feature.geometry.coordinates[1] +
+            "<br /><b>City: </b> " + feature.properties.City +
+            "<br /><b>State: </b> " + feature.properties.State +
+            "<br /><b>Summary: </b> " + feature.properties.Summary +
+            "<br /><b>Legalized Cannabis: </b> " + cann
+        );
+    }
 
 }
 
@@ -120,12 +176,20 @@ dataset.then(function (data) {
     }).addTo(uap_map);
 
     // Update sighting info
-    sightingInfo()
+    mostReportedLon = median(arMostReportedLon)
+    mostReportedLat = median(arMostReportedLat)
+     sightingInfo()
  });
 
  // Filter to shape
  function setShape(shape){
     shape_filter = shape
+    unFilterMap()
+ }
+
+  // Filter to shape
+ function setStarbucks(option){
+    showStarbucks = option
     unFilterMap()
  }
 
@@ -140,9 +204,11 @@ dataset.then(function (data) {
     sightInfo.html('Sighting Info: ' + shape_filter + '<br />')
     sightInfo = d3.select("#sample-metadata");
     sightInfo.html('<b>Number of sightings:</b> ' + sightingsCount + '<br />' +
-        '<b>Last Date:</b> ' + sightingOccurred + '<br />' + 
-        '<b>Last Location:</b> ' + sightingCity + ', ' + sightingState + '<br />' + 
-        '<b>Last Summary:</b> ' + sightingSummary + '<br />'
+        //'<b>Last Date:</b> ' + sightingOccurred + '<br />' + 
+        //'<b>Last Location:</b> ' + sightingCity + ', ' + sightingState + '<br />' + 
+        //'<b>Last Summary:</b> ' + sightingSummary + '<br />' + 
+        '<b>Reported Lon Median:</b> ' + mostReportedLon + '<br />' + 
+        '<b>Reported Lat Median:</b> ' + mostReportedLat + '<br />' 
     )
  }
 
@@ -152,15 +218,35 @@ dataset.then(function (data) {
     fYear = fDate.getFullYear()
     t = document.getElementById("yearValue").innerHTML.text
     slider = document.getElementById("slidecontainer");
-    if (shape_filter == 'All' && fYear <= slider.value) {
-        markerRadius = 1
-        shapeColor = '#FFFF00'
-        markersOnMap += 1
+    slider2 = document.getElementById("slidecontainer2");
+
+    if (shape_filter == 'All' && fYear <= slider.value && fYear >= slider2.value || 
+        feature.properties.Shape == 'Starbucks') {
+        if (feature.properties.Shape == 'Starbucks'){
+            if(showStarbucks == 'No'){
+                return false
+            }
+            markerRadius = .1
+            shapeColor = '#00FF00'
+        } else {
+            markerRadius = 1
+            shapeColor = '#FFFF00'
+            markersOnMap += 1
+        }
         return true
-    }else if (feature.properties.Shape == shape_filter && fYear <= slider.value){
-        markerRadius = 3
-        shapeColor = '#FF0000'
-        markersOnMap += 1
+
+    }else if (feature.properties.Shape == shape_filter && fYear <= slider.value && fYear >= slider2.value || feature.properties.Shaper == 'Starbucks'){
+        if (feature.properties.Shape == 'Starbucks'){
+            if(showStarbucks == 'No'){
+                return false
+            }
+            markerRadius = .1
+            shapeColor = '#00FF00'
+        } else {
+            markerRadius = 3
+            shapeColor = '#FF0000'
+            markersOnMap += 1
+        }       
         return true
     }else {
         return false
@@ -177,6 +263,8 @@ dataset.then(function (data) {
     sightingCity = ''
     sightingState = ''
     sightingSummary = ''
+    arMostReportedLon = []
+    arMostReportedLat = []
     dataset.then(function (data) {
 
        geoLayer = L.geoJson(data, {
@@ -188,9 +276,11 @@ dataset.then(function (data) {
         }).addTo(uap_map) 
 
         // Update sighting info
+        
+        mostReportedLon = median(arMostReportedLon)
+        mostReportedLat = median(arMostReportedLat)
         sightingInfo()
     });
-    
  }
 
  // Populate the shape filter

@@ -103,12 +103,16 @@ function buildCharts(sample) {
   });
 }
 
+let dta = Object
+let dtaShape = []
+let names = Object
 // Function to run on page load
 function init() {
-  d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
+  d3.json("../UAP_Data/uap_data_output.geojson").then((data) => {
 
+    dta = data.features
     // Get the names field
-    let names = data.names;
+    names = data.names;
 
     // Use d3 to select the dropdown with id of `#selDataset`
     let dropdownMenu = d3.select("#selDataset");
@@ -116,8 +120,15 @@ function init() {
     // Use the list of sample names to populate the select options
     // Hint: Inside a loop, you will need to use d3 to append a new
     // option for each sample name.
-    names.forEach(function(name){
-      dropdownMenu.append("option").text(name).property("value");
+    dta.forEach(function(shape){
+      d3.select("#selDataset").selectAll("option")
+        .data(d3.map(data, function(d){return d.shape.properties.Shape;}).keys())
+        .enter()
+        .append("option")
+        .text(function(d){return d;})
+        .attr("value",function(d){return d;});
+      //let thisShape = shape.properties.Shape
+      //dropdownMenu.append("option").text(thisShape).property("value");
     });
 
     // Get the first sample from the list

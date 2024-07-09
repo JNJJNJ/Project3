@@ -65,7 +65,13 @@
           <h6>UAP Shape Filter:</h6>
           <select id="selDataset" onchange="setShape(this.value)"></select>
         </div>
-        
+        <div class="card card-body bg-light">
+          <h6>Show Starbucks?</h6>
+          <select id="showStarbucks" onchange="setStarbucks(this.value)">
+            <option>Yes</option>
+            <option selected="selected">No</option>
+          </select>
+        </div>
         <br>
         <div class="card card-primary">
           <div class="card-header">
@@ -77,16 +83,28 @@
       <div class="col-md-9">
         <div class="card card-body bg-light">
         <div class="slidecontainer">
-          <h6>All years less than: <span id="yearValue"></span></h6>
+          <h6><b>Filter Years:</b> Showing UAP Reports up to year: <span id="yearValue"></span></h6>
           <input type="range" min="1900" max="2024" value="2024" id="slidecontainer" onchange="setDate(this.value)">
+        </div>
+        <div class="slidecontainer">
+          <h6><b>Filter Years:</b> Showing UAP Reports after year: <span id="yearValue2"></span></h6>
+          <input type="range" min="1900" max="2024" value="1900" id="slidecontainer2" onchange="setDate(this.value)">
         </div>
         <script>
           var slider = document.getElementById("slidecontainer");
           var output = document.getElementById("yearValue");
           output.innerHTML = slider.value;
           
+          var slider2 = document.getElementById("slidecontainer2");
+          var output2 = document.getElementById("yearValue2");
+          output2.innerHTML = slider2.value;
+
           slider.oninput = function() {
             output.innerHTML = this.value;
+          }
+
+          slider2.oninput = function() {
+            output2.innerHTML = this.value;
           }
           </script>
           </div>
