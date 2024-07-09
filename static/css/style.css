@@ -3,6 +3,11 @@ body {
   margin: 0;
 }
 
+body,
+html {
+  height: 100%;
+}
+
 #slidecontainer,
 #slidecontainer2{
   width: 100%
@@ -18,11 +23,6 @@ body {
   height: 50px;
 }
 
-body,
-html {
-  height: 100%;
-}
-
 .legend{
   background-color: white;
   padding: 10px;
@@ -34,4 +34,16 @@ img {
   width: 60%;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.card {
+  margin-top: 20px;
+}
+
+.container {
+  border-radius: 20px;
+}
+
+.top {
+  padding: 20px;
 }

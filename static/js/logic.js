@@ -20,14 +20,12 @@ let mostReportedLon = 0
 let mostReportedLat = 0
 let lightSwitch = 'Off'
 
-
 // Initiate the Leaflet map
 let uap_map = L.map("map", {
     // Centered on Kansas City
     center: [39.09, -94.58],
     zoom: 4
 });
-
 
 // Add the tile layer to the map
 var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
@@ -100,9 +98,10 @@ function median(values){
     
 }
 
-
 // Leaflet Marker Color: 
 function shape_color(shape) {
+    // Not doing anything here
+    // reserved for future use
     return shapeColor
 }
 
@@ -139,9 +138,13 @@ function each_feature(feature, layer) {
     if (feature.properties.Shape != 'Starbucks'){
         sightingsCount += 1 
     }
+
+    // add lat lon for median analysis
     arMostReportedLon.push(feature.geometry.coordinates[0])
     arMostReportedLat.push(feature.geometry.coordinates[1])
 
+    // needs fixed
+    // save the latest date entry info to display
     if(sightingOccurred < sight_date){
         sightingSummary = feature.properties.Summary
         sightingCity = feature.properties.City
@@ -149,12 +152,15 @@ function each_feature(feature, layer) {
         sightingOccurred = sight_date
     }
 
+    // cannabis legal year or 'not yet'
     let cann = feature.properties.Legal_Cannabis
     if(cann === '1/1/2050'){
         cann = 'Not Yet'
     }
+
+    
+    // add popup (separate starbucks entry)
     let UAPShape = feature.properties.Shape
-    // add popup
     if (UAPShape === 'Starbucks'){
         if (showStarbucks == 'Yes'){
             layer.bindPopup(
@@ -215,8 +221,6 @@ dataset.then(function (data) {
     unFilterMap()
  }
 
-
-
  // Filter to date
  function setDate(){
     unFilterMap()
@@ -227,10 +231,7 @@ dataset.then(function (data) {
     let sightInfo = d3.select("#SightingHeader");
     sightInfo.html('Sighting Info: ' + shape_filter + '<br />')
     sightInfo = d3.select("#sample-metadata");
-    sightInfo.html('<b>Number of sightings:</b> ' + sightingsCount + '<br />' +
-        //'<b>Last Date:</b> ' + sightingOccurred + '<br />' + 
-        //'<b>Last Location:</b> ' + sightingCity + ', ' + sightingState + '<br />' + 
-        //'<b>Last Summary:</b> ' + sightingSummary + '<br />' + 
+    sightInfo.html('<b>Number of sightings</b>: ' + sightingsCount + '<br />' +
         '<b>Reported Lon Median:</b> ' + mostReportedLon + '<br />' + 
         '<b>Reported Lat Median:</b> ' + mostReportedLat + '<br />' 
     )
@@ -254,7 +255,11 @@ dataset.then(function (data) {
             shapeColor = '#00FF00'
         } else {
             markerRadius = 1
-            shapeColor = '#00FFFF'
+            if(lightSwitch == 'Off'){
+                shapeColor = '#FFFF00'
+            }else{
+                shapeColor = '#00FFFF'
+            }
             markersOnMap += 1
         }
         return true
@@ -276,7 +281,6 @@ dataset.then(function (data) {
         return false
     }
  }
-
 
  // Reload map with filters
  function unFilterMap (feature, layer){
