@@ -77,10 +77,12 @@ function median(values){
     
     const half = Math.floor(values.length / 2);
     
-    return (values.length % 2
+    rslt = (values.length % 2
         ? values[half]
-        : (values[half - 1] + values[half]) / 2
-    );
+        : (values[half - 1] + values[half]) / 2);
+    rslt = (Math.round(rslt*10000))/10000
+
+    return rslt
     
 }
 
@@ -265,6 +267,8 @@ dataset.then(function (data) {
     sightingSummary = ''
     arMostReportedLon = []
     arMostReportedLat = []
+    mostReportedLon = 0
+    mostReportedLat = 0
     dataset.then(function (data) {
 
        geoLayer = L.geoJson(data, {
