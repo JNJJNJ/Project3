@@ -6,7 +6,7 @@ let dataset = d3.json(url)
 let geoLayer
 let shape_filter = 'All'
 let markerRadius = .1
-let shapeColor = '#FFFF00'
+let shapeColor = '#00FFFF'
 let markersOnMap = 10000
 let sightingsCount = 0
 let sightingSummary = ''
@@ -18,6 +18,7 @@ let arMostReportedLon = []
 let arMostReportedLat = []
 let mostReportedLon = 0
 let mostReportedLat = 0
+let lightSwitch = 'Off'
 
 
 // Initiate the Leaflet map
@@ -36,6 +37,17 @@ var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/a
 	ext: 'png'
 });
 Stadia_AlidadeSmoothDark.addTo(uap_map);
+
+// Tile layer for the city lights
+let VIIRS_CityLights_2012 = L.tileLayer('https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{time}/{tilematrixset}{maxZoom}/{z}/{y}/{x}.{format}', {
+    attribution: 'Imagery provided by services from the Global Imagery Browse Services (GIBS), operated by the NASA/GSFC/Earth Science Data and Information System (<a href="https://earthdata.nasa.gov">ESDIS</a>) with funding provided by NASA/HQ.',
+    bounds: [[-85.0511287776, -179.999999975], [85.0511287776, 179.999999975]],
+    minZoom: 1,
+    maxZoom: 8,
+    format: 'jpg',
+    time: '',
+    tilematrixset: 'GoogleMapsCompatible_Level'
+});
 
 // Shape list
 let shapes = [
@@ -197,6 +209,13 @@ dataset.then(function (data) {
     unFilterMap()
  }
 
+ function switchLights(option){
+    lightSwitch = option
+    unFilterMap()
+ }
+
+
+
  // Filter to date
  function setDate(){
     unFilterMap()
@@ -234,7 +253,7 @@ dataset.then(function (data) {
             shapeColor = '#00FF00'
         } else {
             markerRadius = 1
-            shapeColor = '#FFFF00'
+            shapeColor = '#00FFFF'
             markersOnMap += 1
         }
         return true
@@ -287,6 +306,14 @@ dataset.then(function (data) {
         mostReportedLat = median(arMostReportedLat)
         sightingInfo()
     });
+
+    if(lightSwitch == 'Off'){
+        VIIRS_CityLights_2012.remove();
+        Stadia_AlidadeSmoothDark.addTo(uap_map);
+    } else {        
+        Stadia_AlidadeSmoothDark.remove();
+        VIIRS_CityLights_2012.addTo(uap_map);
+    }
  }
 
  // Populate the shape filter
