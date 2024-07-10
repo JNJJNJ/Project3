@@ -1,9 +1,7 @@
 // API endpoint
-let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
 
-//let queryUrl = "../UAP_Data/uap_data_output.geojson";
+let queryUrl = "../UAP_Data/uap_data_output.geojson";
 
-//let jsonFilePath = "C:/Users/dsfac/KUProjects/Project3Practice/DF_Leaflet/static/js/uap_data_output.geojson";
 //Get request to the URL
 d3.json(queryUrl).then(function(data){
 
