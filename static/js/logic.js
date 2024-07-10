@@ -5,6 +5,7 @@ let url = "../UAP_Data/uap_data_output.geojson";
 let dataset = d3.json(url)
 let geoLayer
 let shape_filter = 'All'
+let state_filter = 'All'
 let markerRadius = .1
 let shapeColor = '#FFFF00'
 let markersOnMap = 10000
@@ -63,6 +64,67 @@ let shapes = [
     "Teardrop",
     "Triangle"
     ]
+
+// State List
+let states = [
+    "AL",
+    "AK",
+    "AR",
+    "AS",
+    "AZ",
+    "CA",
+    "CO",
+    "CT",
+    "DC",
+    "DE",
+    "FL",
+    "GA",
+    "GU",
+    "HI",
+    "IA",
+    "ID",
+    "IL",
+    "IN",
+    "KS",
+    "KY",
+    "LA",
+    "MA",
+    "MD",
+    "ME",
+    "MI",
+    "MN",
+    "MO",
+    "MP",
+    "MS",
+    "MT",
+    "NC",
+    "ND",
+    "NE",
+    "NH",
+    "NJ",
+    "NM",
+    "NV",
+    "NY",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "PR",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TT",
+    "TX",
+    "UT",
+    "VA",
+    "VI",
+    "VT",
+    "WA",
+    "WI",
+    "WV",
+    "WY"
+]
 
 // Get Median Values
 // Credit https://jsfiddle.net/zgtne5s6/
@@ -175,7 +237,7 @@ dataset.then(function (data) {
         pointToLayer: setMarkers,
         // Feature data popup
         onEachFeature: each_feature,
-        // Shape and Date filters
+        // Shape, Date, and State filters
         filter: filterMap
     }).addTo(uap_map);
 
@@ -191,7 +253,13 @@ dataset.then(function (data) {
     unFilterMap()
  }
 
-  // Filter to shape
+ // Filter to state
+ function setState(state){
+    state_filter = state
+    unFilterMap()
+ }
+
+  // Filter to Starbucks or no Starbucks
  function setStarbucks(option){
     showStarbucks = option
     unFilterMap()
@@ -205,7 +273,7 @@ dataset.then(function (data) {
  // Display Sighting Info Card
  function sightingInfo(){
     let sightInfo = d3.select("#SightingHeader");
-    sightInfo.html('Sighting Info: ' + shape_filter + '<br />')
+    sightInfo.html('Sighting Info: ' + shape_filter + state_filter + '<br />')
     sightInfo = d3.select("#sample-metadata");
     sightInfo.html('<b>Number of sightings:</b> ' + sightingsCount + '<br />' +
         //'<b>Last Date:</b> ' + sightingOccurred + '<br />' + 
@@ -224,7 +292,7 @@ dataset.then(function (data) {
     slider = document.getElementById("slidecontainer");
     slider2 = document.getElementById("slidecontainer2");
 
-    if (shape_filter == 'All' && fYear <= slider.value && fYear >= slider2.value || 
+    if (shape_filter == 'All' && state_filter == 'All' && fYear <= slider.value && fYear >= slider2.value || 
         feature.properties.Shape == 'Starbucks') {
         if (feature.properties.Shape == 'Starbucks'){
             if(showStarbucks == 'No'){
@@ -239,7 +307,7 @@ dataset.then(function (data) {
         }
         return true
 
-    }else if (feature.properties.Shape == shape_filter && fYear <= slider.value && fYear >= slider2.value || feature.properties.Shaper == 'Starbucks'){
+    }else if (feature.properties.Shape == shape_filter && feature.properties.State == state_filter && fYear <= slider.value && fYear >= slider2.value || feature.properties.Shaper == 'Starbucks'){
         if (feature.properties.Shape == 'Starbucks'){
             if(showStarbucks == 'No'){
                 return false
@@ -294,7 +362,11 @@ dataset.then(function (data) {
  dropdownMenu.append("option").text("All").property("value");
  for (x in shapes){
     dropdownMenu.append("option").text(shapes[x]).property("value");
- } 
-
-
-
+ }
+ 
+ // Populate the state filter
+ let dropdownMenu2 = d3.select("#selDataset");
+ dropdownMenu2.append("option").text("All").property("value");
+ for (x in states){
+    dropdownMenu2.append("option").text(states[x]).property("value");
+ }
