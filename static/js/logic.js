@@ -9,7 +9,7 @@ let markerRadius = .1
 let shapeColor = '#00FFFF'
 let markersOnMap = 10000
 let sightingsCount = 0
-let sightingSummary = ''
+let sightingSummary = []
 let sightingCity = ''
 let sightingState = ''
 let sightingOccurred = ''
@@ -145,12 +145,13 @@ function each_feature(feature, layer) {
 
     // needs fixed
     // save the latest date entry info to display
-    if(sightingOccurred < sight_date){
-        sightingSummary = feature.properties.Summary
-        sightingCity = feature.properties.City
-        sightingState = feature.properties.State
-        sightingOccurred = sight_date
-    }
+    info = {Date: sight_date,
+        Summary: feature.properties.Summary,
+        City: feature.properties.City,
+        State: feature.properties.State,
+        Occurred: sight_date
+}
+        sightingSummary.push(info)
 
     // cannabis legal year or 'not yet'
     let cann = feature.properties.Legal_Cannabis
@@ -202,6 +203,7 @@ dataset.then(function (data) {
     mostReportedLon = median(arMostReportedLon)
     mostReportedLat = median(arMostReportedLat)
      sightingInfo()
+     add_legend(uap_map)
  });
 
  // Filter to shape
@@ -290,7 +292,7 @@ dataset.then(function (data) {
     sightingOccurred = ''
     sightingCity = ''
     sightingState = ''
-    sightingSummary = ''
+    sightingSummary = []
     arMostReportedLon = []
     arMostReportedLat = []
     mostReportedLon = 0
@@ -309,6 +311,7 @@ dataset.then(function (data) {
         mostReportedLon = median(arMostReportedLon)
         mostReportedLat = median(arMostReportedLat)
         sightingInfo()
+        add_legend(uap_map, 1)
     });
 
     if(lightSwitch == 'Off'){
@@ -320,12 +323,49 @@ dataset.then(function (data) {
     }
  }
 
+
+ // Summary output
+ function make_legend(){
+    let legend = L.DomUtil.create("div", "legend")
+
+    htmlStr = '<b>Number of sightings:</b> ' + sightingsCount + '<br /><br />'
+    maxShow = (sightingsCount < 100) ? sightingsCount : 100;
+    for(i=0;i<maxShow;i++){
+        rand = i
+        if(maxShow > 100){rand = getRandomInt(0, sightingsCount)}
+        htmlStr += '<b>' + sightingSummary[rand].Date + ': ' +
+        sightingSummary[rand].City + ',' + 
+        sightingSummary[rand].State + '</b><br />' +
+        sightingSummary[rand].Summary + '<br /><br />'
+    }
+
+    legend.innerHTML = htmlStr
+
+    return legend;
+}
+
+// return random integer
+function getRandomInt(min, max) {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+  }
+
+
+// Leaflet layer for the Summary output
+let legend = L.control({position: "bottomright"});
+function add_legend(map, reload){
+    if(reload){
+        legend.remove(map)
+    }
+    
+    legend.onAdd = make_legend
+    legend.addTo(map)
+}
+
  // Populate the shape filter
  let dropdownMenu = d3.select("#selDataset");
  dropdownMenu.append("option").text("All").property("value");
  for (x in shapes){
     dropdownMenu.append("option").text(shapes[x]).property("value");
  } 
-
-
-
