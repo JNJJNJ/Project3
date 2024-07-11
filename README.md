@@ -46,10 +46,11 @@ For our research endeavor, we set out to investigate the correlation between  UF
     - Leaflet js: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     
 ---
-:globe_with_meridians:
+
 **Ethical Considerations**
 - We made all effort to ensure the data we retrieved and used was made available from open sources. We inspected data sites to seek any warnings or disclaimers made by the authors and/or publishers of the dataset for any requests to not scrape their data. We respected any such requests we came across upon and seeked alternative data sources.
 
+:globe_with_meridians:
 **Data source:**
   - https://nuforc.org/
   - https://www.kaggle.com/datasets/starbucks/store-locations
