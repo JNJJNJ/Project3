@@ -9,7 +9,7 @@
 - John Teasley
 
 ## Overview
-For our research endeavor, we set out to investigate the correlation between  UFO sightings  and a diverse range of contributing factors such as Year and Shape, Light Pollution, Legality of Cannabis, Starbuck locations, and Latitude. Analyzing UFO sightings can pinpoint trends and patterns which will enable  us to better understand the mysteries in our universe and our place in it. 
+For our research endeavor, we set out to investigate the correlation between  UFO sightings  and a diverse range of contributing factors such as Year and Shape, Light Pollution, Legality of Cannabis, Starbucks locations, and Latitude. Analyzing UFO sightings can pinpoint trends and patterns which will enable  us to better understand the mysteries in our universe and our place in it. 
 
 :memo:
 **ABOUT:**
@@ -29,7 +29,7 @@ For our research endeavor, we set out to investigate the correlation between  UF
   - When a shape filter is used, the location dots will be colored red.
   - Under the Sighting Info: You will see the total number of sightings along with the Longitude and Latitude median values.
     - The longitude and latitude median values will help to understand where the most sightings occur
-    - Visit this location and increase the chances of seeing a AUP yourself!
+    - Visit this location and increase the chances of seeing a UAP yourself!
 ![Screenshot 2024-07-10 134835](https://github.com/JNJJNJ/Project3/assets/162941137/55e7faf0-215a-4236-9c87-9484da43c0ed)
 ---
 :pencil2:
