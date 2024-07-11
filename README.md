@@ -1,6 +1,13 @@
 # UAP Project
 ### Group project
 
+## Team Members
+- Ramona Bailey
+- Daryn Fackrell
+- Ryan Fagen
+- Jay Singh
+- John Teasley
+
 :memo:
 **ABOUT:**
   - This is an interactive web page to to visualize UAP reports.
