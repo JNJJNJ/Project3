@@ -30,7 +30,8 @@ For our research endeavor, we set out to investigate the correlation between  UF
   - Under the Sighting Info: You will see the total number of sightings along with the Longitude and Latitude median values.
     - The longitude and latitude median values will help to understand where the most sightings occur
     - Visit this location and increase the chances of seeing a UAP yourself!
-![Screenshot 2024-07-10 134835](https://github.com/JNJJNJ/Project3/assets/162941137/55e7faf0-215a-4236-9c87-9484da43c0ed)
+![image](https://github.com/JNJJNJ/Project3/assets/162941137/ad59a57d-db21-41ad-a49c-b4fafe1437c8)
+
 ---
 :pencil2:
 **Presentation and analysis document**
