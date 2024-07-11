@@ -39,6 +39,7 @@
 :globe_with_meridians:
 **Data source:**
   - https://nuforc.org/
+  - https://www.kaggle.com/datasets/starbucks/store-locations
 
 ---
 :globe_with_meridians:
