@@ -40,6 +40,9 @@
 **Data source:**
   - https://nuforc.org/
   - https://www.kaggle.com/datasets/starbucks/store-locations
+  - https://earthdata.nasa.gov
+  - https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction#:~:text=The%20Rohrabacher%E2%80%93Farr%20amendment%2C%20first,states%20have%20decriminalized%20its%20use.
+  - 
 
 ---
 :globe_with_meridians:
