@@ -8,11 +8,10 @@
 - Jay Singh
 - John Teasley
 
-:memo:
 ## Overview
 For our research endeavor, we set out to investigate the correlation between  UFO sightings  and a diverse range of contributing factors such as Year and Shape, Light Pollution, Legality of Cannabis, Starbuck locations, and Latitude. Analyzing UFO sightings can pinpoint trends and patterns which will enable  us to better understand the mysteries in our universe and our place in it. 
 
-
+:memo:
 **ABOUT:**
   - This is an interactive web page to to visualize UAP reports.
   - The GeoJSON Summary includes all reports that  goes back 100+ years.
